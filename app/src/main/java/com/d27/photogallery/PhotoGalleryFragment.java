@@ -1,7 +1,9 @@
 package com.d27.photogallery;
 
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +23,7 @@ public class PhotoGalleryFragment extends Fragment {
     final static String TAG = PhotoGalleryFragment.class.getSimpleName();
     private RecyclerView mPhotoRecyclerView;
     private List<GalleryItem> mGalleryItems = new ArrayList<>();
+    private ThumnailDownloader<PhotoHolder> mThumnailDownloader;
 
     public static PhotoGalleryFragment newInstance() {
 
@@ -35,6 +38,11 @@ public class PhotoGalleryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         new FetchItemsTask().execute();
+
+        mThumnailDownloader = new ThumnailDownloader<>();
+        mThumnailDownloader.start();
+        mThumnailDownloader.getLooper();
+        Log.i(TAG, "Background thread started");
     }
 
     @Nullable
@@ -98,6 +106,7 @@ public class PhotoGalleryFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull PhotoHolder holder, int position) {
             holder.bindGalleryItem(mGalleryItems.get(position));
+            mThumnailDownloader.queueThumbmail(holder, mGalleryItems.get(position).getUrl());
         }
 
         @Override
@@ -106,4 +115,10 @@ public class PhotoGalleryFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mThumnailDownloader.quit();
+        Log.i(TAG, "Background thread destoryed");
+    }
 }

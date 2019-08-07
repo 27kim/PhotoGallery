@@ -67,8 +67,8 @@ public class FlickrFetchr {
             String jsonString = getUrlString(url);
             Log.i(TAG, "Received JSON : " + jsonString);
             JSONObject jsonObject = new JSONObject(jsonString);
-//            parseItems(items, jsonObject);
-            parseItems_gson(jsonString);
+            parseItems(items, jsonObject);
+//            parseItems_gson(jsonString);
         } catch (IOException e) {
             Log.e(TAG, "Falied to fech items", e);
         } catch (JSONException e) {
