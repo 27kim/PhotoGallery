@@ -2,21 +2,15 @@ package com.d27.photogallery;
 
 import android.net.Uri;
 import android.util.Log;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class FlickrFetchr {
@@ -98,10 +92,5 @@ public class FlickrFetchr {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
-    private void parseItems_gson(String jsonString) {
-        List<GalleryItem> data = Arrays.asList(new Gson().fromJson(jsonString, GalleryItem[].class));
-
-        items = data;
     }
 }
