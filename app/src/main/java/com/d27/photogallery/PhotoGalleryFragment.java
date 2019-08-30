@@ -54,9 +54,6 @@ public class PhotoGalleryFragment extends Fragment {
         mThumbnailDownloader.start();
         mThumbnailDownloader.getLooper();
         Log.i(TAG, "onCreate: Background thread started");
-
-
-
     }
 
     @Nullable
