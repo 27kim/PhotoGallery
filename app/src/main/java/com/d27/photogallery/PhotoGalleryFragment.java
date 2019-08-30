@@ -95,13 +95,9 @@ public class PhotoGalleryFragment extends Fragment {
 
         public PhotoHolder(@NonNull View itemView) {
             super(itemView);
-//            mTiltleTextView = (TextView) itemView;
             mImageView = (ImageView) itemView.findViewById(R.id.fragment_photo_gallery_image_view);
         }
 
-//        public void bindGalleryItem(GalleryItem item) {
-//            mTiltleTextView.setText(item.toString());
-//        }
         public void bindDrawable(Drawable drawable) {
             mImageView.setImageDrawable(drawable);
         }
@@ -117,8 +113,6 @@ public class PhotoGalleryFragment extends Fragment {
         @NonNull
         @Override
         public PhotoHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//            TextView textView = new TextView(getActivity());
-//            return new PhotoHolder(textView);
             LayoutInflater inflater = LayoutInflater.from(getActivity());
             View view = inflater.inflate(R.layout.gallery_item, parent, false);
             return new PhotoHolder(view);
@@ -126,7 +120,6 @@ public class PhotoGalleryFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull PhotoHolder holder, int position) {
-//            holder.bindDrawable(mGalleryItems.get(position));
             GalleryItem galleryItem = mGalleryItems.get(position);
             Drawable placeholder = getResources().getDrawable(R.drawable.ic_launcher_foreground);
             holder.bindDrawable(placeholder);

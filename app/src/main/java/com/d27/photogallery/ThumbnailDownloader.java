@@ -40,7 +40,6 @@ public class ThumbnailDownloader<T> extends HandlerThread {
             mRequestHandler.obtainMessage(MESSAGE_DOWNLOAD, target).sendToTarget();
         }
     }
-
     @Override
     protected void onLooperPrepared() {
         mRequestHandler = new Handler(){
