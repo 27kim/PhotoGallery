@@ -10,6 +10,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import java.io.IOException;
+import java.security.MessageDigest;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -46,7 +47,7 @@ public class ThumbnailDownloader<T> extends HandlerThread {
             public void handleMessage(@NonNull Message msg) {
                 if(msg.what ==MESSAGE_DOWNLOAD){
                     T target = (T) msg.obj;
-                    Log.i(TAG, "handleMessage: geta request for URL :" + mRequestMap.get(target));
+                    Log.i(TAG, "handleMessage: get a request for URL :" + mRequestMap.get(target));
                     handleRequest(target);
                 }
                 super.handleMessage(msg);
