@@ -10,7 +10,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import java.io.IOException;
-import java.security.MessageDigest;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -23,34 +22,30 @@ public class ThumbnailDownloader<T> extends HandlerThread {
     private Handler mResponseHandler;
     private ThumbnailDownloadListener<T> mThumbnailDownloadListener;
 
-    public interface ThumbnailDownloadListener<T>{
+    public interface  ThumbnailDownloadListener<T> {
         void onThumbnailDownloaded(T target, Bitmap thumbnail);
     }
-    public void setThumbnailDownloadListener(ThumbnailDownloadListener<T> listener){
-        mThumbnailDownloadListener = listener;
-    }
 
-    public ThumbnailDownloader() {
-        super(TAG);
+    public void setThumbnailDownloadListener(ThumbnailDownloadListener listener){
+        mThumbnailDownloadListener = listener;
     }
 
     public ThumbnailDownloader(Handler responseHandler) {
         super(TAG);
         mResponseHandler = responseHandler;
     }
+
     @Override
     protected void onLooperPrepared() {
         super.onLooperPrepared();
         mRequestHandler = new Handler(){
             @Override
             public void handleMessage(@NonNull Message msg) {
-                if(msg.what ==MESSAGE_DOWNLOAD){
+                super.handleMessage(msg);
+                if(msg.what == MESSAGE_DOWNLOAD){
                     T target = (T) msg.obj;
-                    Log.i(TAG, "handleMessage: get a request for URL :" + mRequestMap.get(target));
                     handleRequest(target);
                 }
-                super.handleMessage(msg);
-
             }
         };
     }
