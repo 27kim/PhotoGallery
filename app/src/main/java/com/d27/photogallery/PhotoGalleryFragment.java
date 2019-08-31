@@ -1,5 +1,6 @@
 package com.d27.photogallery;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -7,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -47,7 +49,7 @@ public class PhotoGalleryFragment extends Fragment {
         //프래크먼트가 안드로이드 운영체제로부터 메뉴의 콜백 메서드 호출을 받을 수 있도록 하기 위해 추가
         setHasOptionsMenu(true);
         updateItems();
-
+        getActivity().getSharedPreferences("",Context.MODE_PRIVATE).edit().putString("","").apply();
         Handler responseHandler = new Handler();
 
         mThumbnailDownloader = new ThumbnailDownloader<>(responseHandler);
