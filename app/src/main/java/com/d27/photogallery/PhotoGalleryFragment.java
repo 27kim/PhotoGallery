@@ -2,6 +2,7 @@ package com.d27.photogallery;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -25,10 +26,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.security.spec.PSSParameterSpec;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PhotoGalleryFragment extends Fragment {
+public class PhotoGalleryFragment extends VisibleFragment {
     final static String TAG = PhotoGalleryFragment.class.getSimpleName();
     private RecyclerView mPhotoRecyclerView;
     private List<GalleryItem> mGalleryItems = new ArrayList<>();
@@ -49,6 +51,7 @@ public class PhotoGalleryFragment extends Fragment {
         //프래크먼트가 안드로이드 운영체제로부터 메뉴의 콜백 메서드 호출을 받을 수 있도록 하기 위해 추가
         setHasOptionsMenu(true);
         updateItems();
+
         getActivity().getSharedPreferences("",Context.MODE_PRIVATE).edit().putString("","").apply();
         Handler responseHandler = new Handler();
 
@@ -74,7 +77,6 @@ public class PhotoGalleryFragment extends Fragment {
 
         final SearchView searchView = (SearchView) searchItem.getActionView();
 
-
         searchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -95,6 +97,13 @@ public class PhotoGalleryFragment extends Fragment {
                 return false;
             }
         });
+
+        MenuItem toggleItem = menu.findItem(R.id.menu_item_toggle_polling);
+        if(PollService.isServiceAlarmOn(getActivity())){
+            toggleItem.setTitle(R.string.stop_polling);
+        }else{
+            toggleItem.setTitle(R.string.start_polling);
+        }
     }
 
     @Override
@@ -103,6 +112,12 @@ public class PhotoGalleryFragment extends Fragment {
             case R.id.menu_item_clear:
                 QueryPreferences.setStoredQuery(getActivity(), null);
                 updateItems();
+                return true;
+            case R.id.menu_item_toggle_polling:
+               boolean shoudStartAlarm = !PollService.isServiceAlarmOn(getActivity());
+               PollService.setServiceAlarm(getActivity(), shoudStartAlarm);
+               //옵션 메뉴 변경 알려줘야 함
+               getActivity().invalidateOptionsMenu();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
