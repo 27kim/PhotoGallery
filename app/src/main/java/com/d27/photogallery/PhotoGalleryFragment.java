@@ -1,6 +1,7 @@
 package com.d27.photogallery;
 
 import android.annotation.TargetApi;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -25,6 +26,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.squareup.picasso.Picasso;
 
 import java.security.spec.PSSParameterSpec;
 import java.util.ArrayList;
@@ -53,18 +57,18 @@ public class PhotoGalleryFragment extends VisibleFragment {
         updateItems();
 
         getActivity().getSharedPreferences("",Context.MODE_PRIVATE).edit().putString("","").apply();
-        Handler responseHandler = new Handler();
-
-        mThumbnailDownloader = new ThumbnailDownloader<>(responseHandler);
-        mThumbnailDownloader.setThumbnailDownloadListener(new ThumbnailDownloader.ThumbnailDownloadListener<PhotoHolder>() {
-            @Override
-            public void onThumbnailDownloaded(PhotoHolder target, Bitmap thumbnail) {
-                Drawable drawable = new BitmapDrawable(thumbnail);
-                target.bindDrawable(drawable);
-            }
-        });
-        mThumbnailDownloader.start();
-        mThumbnailDownloader.getLooper();
+//        Handler responseHandler = new Handler();
+//
+//        mThumbnailDownloader = new ThumbnailDownloader<>(responseHandler);
+//        mThumbnailDownloader.setThumbnailDownloadListener(new ThumbnailDownloader.ThumbnailDownloadListener<PhotoHolder>() {
+//            @Override
+//            public void onThumbnailDownloaded(PhotoHolder target, Bitmap thumbnail) {
+//                Drawable drawable = new BitmapDrawable(thumbnail);
+//                target.bindDrawable(drawable);
+//            }
+//        });
+//        mThumbnailDownloader.start();
+//        mThumbnailDownloader.getLooper();
         Log.i(TAG, "onCreate: Background thread started");
     }
 
@@ -136,6 +140,7 @@ public class PhotoGalleryFragment extends VisibleFragment {
         View view = inflater.inflate(R.layout.fragment_photo_gallery, container, false);
         mPhotoRecyclerView = view.findViewById(R.id.fragment_photo_gallery_recycler_view);
         mPhotoRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+        mPhotoRecyclerView.getRecycledViewPool().setMaxRecycledViews(0, 0);
         setupAdapter();
         return view;
     }
@@ -220,10 +225,14 @@ public class PhotoGalleryFragment extends VisibleFragment {
         @Override
         public void onBindViewHolder(@NonNull PhotoHolder holder, int position) {
             GalleryItem galleryItem = mGalleryItems.get(position);
+
+            Glide.with(getActivity())
+                    .load(galleryItem.getUrl())
+                    .into(holder.mImageView);
             Drawable placeHolder = getResources().getDrawable(R.drawable.ic_launcher_foreground);
             holder.bindDrawable(placeHolder);
             holder.bindGalleryItem(galleryItem);
-            mThumbnailDownloader.queueThumbnail(holder, galleryItem.getUrl());
+//            mThumbnailDownloader.queueThumbnail(holder, galleryItem.getUrl());
         }
 
         @Override
