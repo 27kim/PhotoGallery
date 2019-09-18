@@ -1,5 +1,6 @@
 package com.d27.photogallery;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.Notification;
@@ -21,6 +22,10 @@ import java.util.List;
 public class PollService extends IntentService {
     private static final String TAG = PollService.class.getSimpleName();
     private static final int POLL_INTERVAL = 1000 * 60;
+    public static final String RECEIVER_PERMISSION = "com.d27.photogallery.PRIVATE";
+    public static final String REQUEST_CODE = "REQUEST_CODE";
+    public static final String NOTIFICATION = "NOTIFICATION";
+    public static String ACTION_SHOW_NOTIFICATION = "com.com.d27.photogallery.SHOW_NOTIFICATION";
 
     public PollService() {
         super(TAG);
@@ -29,7 +34,7 @@ public class PollService extends IntentService {
 
     /**
      * onHandleIntent : background thread 에서 실행 됨
-     * */
+     */
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         if (!isNetworkAvailableAndConnected()) {
@@ -68,7 +73,7 @@ public class PollService extends IntentService {
                     //클릭 시 자동으로 사라짐
                     .setAutoCancel(true)
                     .build();
-
+            /*
             NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 notificationManager.createNotificationChannel(new NotificationChannel("default", "기본 채널", NotificationManager.IMPORTANCE_DEFAULT));
@@ -77,6 +82,14 @@ public class PollService extends IntentService {
             // id값은
             // 정의해야하는 각 알림의 고유한 int값
             notificationManager.notify(1, notification);
+            */
+
+            //orderedBroadcast 로 변경
+//            sendBroadcast(new Intent(ACTION_SHOW_NOTIFICATION), RECEIVER_PERMISSION);
+            Intent i = new Intent(ACTION_SHOW_NOTIFICATION);
+            i.putExtra(REQUEST_CODE, 0);
+            i.putExtra(NOTIFICATION, notification);
+            sendOrderedBroadcast(i, RECEIVER_PERMISSION, null, null, Activity.RESULT_OK, null, null);
         }
 
     }
@@ -106,6 +119,7 @@ public class PollService extends IntentService {
             alarmManager.cancel(pi);
             pi.cancel();
         }
+        QueryPreferences.setAlarmOn(context, isOn);
     }
 
     public static boolean isAlarmOn(Context context) {

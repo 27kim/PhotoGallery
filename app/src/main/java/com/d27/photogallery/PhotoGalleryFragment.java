@@ -1,5 +1,6 @@
 package com.d27.photogallery;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -15,16 +16,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SearchView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PhotoGalleryFragment extends Fragment {
+public class PhotoGalleryFragment extends VisibleFragment {
     final static String TAG = PhotoGalleryFragment.class.getSimpleName();
     private RecyclerView mPhotoRecyclerView;
     private List<GalleryItem> mGalleryItems = new ArrayList<>();
@@ -70,7 +71,6 @@ public class PhotoGalleryFragment extends Fragment {
 
         final SearchView searchView = (SearchView) searchItem.getActionView();
 
-
         searchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,9 +93,9 @@ public class PhotoGalleryFragment extends Fragment {
         });
 
         MenuItem toggleItem = menu.findItem(R.id.menu_item_toggle_polling);
-        if(PollService.isAlarmOn(getActivity())){
+        if (PollService.isAlarmOn(getActivity())) {
             toggleItem.setTitle(R.string.stop_polling);
-        }else{
+        } else {
             toggleItem.setTitle(R.string.start_polling);
         }
     }
@@ -108,9 +108,15 @@ public class PhotoGalleryFragment extends Fragment {
                 updateItems();
                 return true;
             case R.id.menu_item_toggle_polling:
-               boolean shouldStartAlarm = PollService.isAlarmOn(getActivity());
-               PollService.setServiceAlarm(getActivity(), shouldStartAlarm);
-               getActivity().invalidateOptionsMenu();
+                boolean shouldStartAlarm;
+                if (item.getTitle().equals(getString(R.string.start_polling))) {
+                    shouldStartAlarm = true;
+                } else {
+                    shouldStartAlarm = false;
+                }
+                PollService.setServiceAlarm(getActivity(), shouldStartAlarm);
+//                boolean shouldStartAlarm = PollService.isAlarmOn(getActivity());
+                getActivity().invalidateOptionsMenu();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -148,6 +154,7 @@ public class PhotoGalleryFragment extends Fragment {
     private class FetchItemsTask extends AsyncTask<Void, Void, List<GalleryItem>> {
 
         String mQuery;
+
         public FetchItemsTask(String query) {
             mQuery = query;
         }
