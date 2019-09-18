@@ -1,15 +1,12 @@
 package com.d27.photogallery;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,11 +19,9 @@ import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.security.spec.PSSParameterSpec;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +47,6 @@ public class PhotoGalleryFragment extends VisibleFragment {
         setHasOptionsMenu(true);
         updateItems();
 
-        getActivity().getSharedPreferences("",Context.MODE_PRIVATE).edit().putString("","").apply();
         Handler responseHandler = new Handler();
 
         mThumbnailDownloader = new ThumbnailDownloader<>(responseHandler);
@@ -99,9 +93,9 @@ public class PhotoGalleryFragment extends VisibleFragment {
         });
 
         MenuItem toggleItem = menu.findItem(R.id.menu_item_toggle_polling);
-        if(PollService.isServiceAlarmOn(getActivity())){
+        if (PollService.isAlarmOn(getActivity())) {
             toggleItem.setTitle(R.string.stop_polling);
-        }else{
+        } else {
             toggleItem.setTitle(R.string.start_polling);
         }
     }
@@ -114,10 +108,15 @@ public class PhotoGalleryFragment extends VisibleFragment {
                 updateItems();
                 return true;
             case R.id.menu_item_toggle_polling:
-               boolean shoudStartAlarm = !PollService.isServiceAlarmOn(getActivity());
-               PollService.setServiceAlarm(getActivity(), shoudStartAlarm);
-               //옵션 메뉴 변경 알려줘야 함
-               getActivity().invalidateOptionsMenu();
+                boolean shouldStartAlarm;
+                if (item.getTitle().equals(getString(R.string.start_polling))) {
+                    shouldStartAlarm = true;
+                } else {
+                    shouldStartAlarm = false;
+                }
+                PollService.setServiceAlarm(getActivity(), shouldStartAlarm);
+//                boolean shouldStartAlarm = PollService.isAlarmOn(getActivity());
+                getActivity().invalidateOptionsMenu();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -155,6 +154,7 @@ public class PhotoGalleryFragment extends VisibleFragment {
     private class FetchItemsTask extends AsyncTask<Void, Void, List<GalleryItem>> {
 
         String mQuery;
+
         public FetchItemsTask(String query) {
             mQuery = query;
         }

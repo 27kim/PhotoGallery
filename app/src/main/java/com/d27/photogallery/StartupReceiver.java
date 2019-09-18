@@ -7,10 +7,12 @@ import android.util.Log;
 
 public class StartupReceiver extends BroadcastReceiver {
 
-    private static final String STARTUP_RECEIVER = "StartupReceiver";
+    private static final String TAG = StartupReceiver.class.getSimpleName();
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(STARTUP_RECEIVER, "onReceive: " + intent.getAction());
+        Log.i(TAG, "onReceive: " + intent.getAction());
+        boolean alarmOn = QueryPreferences.isAlarmOn(context);
+        PollService.setServiceAlarm(context, alarmOn);
     }
 }
