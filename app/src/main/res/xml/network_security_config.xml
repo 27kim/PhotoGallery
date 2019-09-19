@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <!--http:// https:// 붙이면 안됨 -->
+        <domain includeSubdomains="true">www.flickr.com</domain>
+    </domain-config>
+</network-security-config>
